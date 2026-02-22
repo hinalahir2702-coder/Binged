@@ -1,194 +1,219 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CineNova</title>
+<title>Media Tracker</title>
 
 <style>
 body {
   font-family: Arial;
-  background: #0f0f0f;
-  color: white;
+  background: #f4f4f4;
   padding: 20px;
 }
 
-h2, h3 { margin-top: 25px; }
-
 input, select, textarea, button {
-  width: 100%;
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 8px;
-  border: none;
+  margin: 5px;
+  padding: 6px;
 }
-
-button {
-  background: #333;
-  color: white;
-  cursor: pointer;
-}
-
-button:hover { background: #444; }
 
 .card {
-  background: #1c1c1c;
+  background: white;
   padding: 12px;
-  margin-top: 12px;
-  border-radius: 12px;
-  position: relative;
-}
-
-.menu {
-  display: none;
-  margin-top: 5px;
-}
-
-.menu button {
-  background: #2a2a2a;
+  margin: 10px 0;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .top-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
 .dot {
-  font-size: 22px;
   cursor: pointer;
 }
 
-.checkbox {
-  margin-right: 8px;
+.section {
+  margin-top: 30px;
 }
 </style>
+
 </head>
 <body>
 
-<h2>🎬 CineNova</h2>
+<h2>Add Media</h2>
 
 <input id="title" placeholder="Title">
 
 <select id="type">
+  <option value="Movie">Movie</option>
+  <option value="Series">Series</option>
+  <option value="Book">Book</option>
+</select>
+
+<input id="genre" placeholder="Genre">
+<input id="rating" type="number" placeholder="Rating (1-10)">
+<input id="date" type="date">
+<textarea id="notes" placeholder="Notes"></textarea>
+
+<br>
+<button onclick="addWatched()">Add to Watched</button>
+<button onclick="addWishlist()">Add to Wishlist</button>
+
+<hr>
+
+<h2>Advanced Filters</h2>
+
+<select onchange="setTimeFilter(this.value)">
+  <option value="">All Time</option>
+  <option value="thisYear">This Year</option>
+  <option value="lastMonth">Last Month</option>
+</select>
+
+<select onchange="setGenreFilter(this.value)">
+  <option value="all">All Genres</option>
+  <option>Horror</option>
+  <option>Mystery</option>
+  <option>Romance</option>
+  <option>Action</option>
+</select>
+
+<select onchange="setTypeFilter(this.value)">
+  <option value="all">All Types</option>
   <option>Movie</option>
   <option>Series</option>
   <option>Book</option>
 </select>
 
-<select id="genre">
-  <option>Action</option>
-  <option>Drama</option>
-  <option>Comedy</option>
-  <option>Romance</option>
-  <option>Thriller</option>
-  <option>Sci-Fi</option>
-  <option>Horror</option>
-  <option>Mystry</option>
-  <option>Superhero</option>
-  <option>Spy</option>
-  <option>FamilyDrama</option>
-  <option>Fantasy</option>
-  <option>Animation</option>
-  <option>Cartoon</option>
-  <option>Documentry</option>
-  <option>Biography</option>
-  <option>Travel</option>
-  <option>Musical</option>
-  <option>Crime</option>
-  <option>RealityShow</option>
-  <option>GameShow</option>
-  <option>TalkShow</option>
-</select>
+<p id="watchedCount"></p>
 
-<input id="rating" type="number" min="1" max="10" placeholder="Rating (1-10)">
-<input id="date" type="date">
-<textarea id="notes" placeholder="Notes"></textarea>
+<hr>
 
-<button onclick="addWatched()">Add to Watched</button>
-<button onclick="addWishlist()">Add to Wishlist</button>
-<button onclick="toggleSelectMode()">Select Mode</button>
-<button onclick="deleteSelected()">Delete Selected</button>
+<h2>Sort</h2>
+<button onclick="sortWatched('date')">By Date</button>
+<button onclick="sortWatched('rating')">By Rating</button>
+<button onclick="sortWatched('alpha')">Alphabetical</button>
+<button onclick="sortWatched('genre')">By Genre</button>
+<button onclick="sortWatched('type')">By Type</button>
 
-<select onchange="sortWatched(this.value)">
-  <option value="">Sort Watched</option>
-  <option value="date">By Date (Newest)</option>
-  <option value="rating">By Rating (Highest)</option>
-  <option value="alpha">Alphabetical</option>
-  <option value="genre">By Genre</option>
-  <option value="type">By Type</option>
-</select>
+<hr>
 
-<select onchange="filterWatched(this.value)">
-  <option value="">Filter Watched</option>
-  <option value="movie">Movies Only</option>
-  <option value="series">Series Only</option>
-  <option value="book">Books Only</option>
-  <option value="action">Action</option>
-  <option value="drama">Drama</option>
-  <option value="comedy">Comedy</option>
-  <option value="romance">Romance</option>
-  <option value="thriller">Thriller</option>
-  <option value="sci-fi">Sci-Fi</option>
-  <option value="horror">Horror</option>
-</select>
-
-<button onclick="clearFilter()">Clear Filter</button>
-
-<h3>Watched</h3>
+<div class="section">
+<h2>Watched</h2>
 <div id="watchedList"></div>
+</div>
 
-<h3>Wishlist</h3>
+<div class="section">
+<h2>Wishlist</h2>
 <div id="wishlist"></div>
+</div>
 
 <script>
+
 let watched = JSON.parse(localStorage.getItem("watched")) || [];
 let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-let selectMode = false;
-let selectedWatched = new Set();
-let selectedWishlist = new Set();
-let currentFilter = "";
+
+let timeFilter = "";
+let genreFilter = "";
+let typeFilter = "";
+
+/* -------- SAVE -------- */
 
 function save() {
   localStorage.setItem("watched", JSON.stringify(watched));
   localStorage.setItem("wishlist", JSON.stringify(wishlist));
 }
 
+/* -------- GET FORM DATA -------- */
+
 function getFormData() {
   return {
-    title: title.value,
-    type: type.value,
-    genre: genre.value,
-    rating: rating.value,
-    date: date.value,
-    notes: notes.value
+    title: document.getElementById("title").value,
+    type: document.getElementById("type").value,
+    genre: document.getElementById("genre").value,
+    rating: document.getElementById("rating").value,
+    date: document.getElementById("date").value,
+    notes: document.getElementById("notes").value
   };
 }
+
+function clearForm() {
+  title.value = "";
+  genre.value = "";
+  rating.value = "";
+  date.value = "";
+  notes.value = "";
+}
+
+/* -------- ADD -------- */
 
 function addWatched() {
   watched.push(getFormData());
   save();
   render();
+  clearForm();
 }
 
 function addWishlist() {
   wishlist.push(getFormData());
   save();
   render();
+  clearForm();
 }
 
-function toggleSelectMode() {
-  selectMode = !selectMode;
-  selectedWatched.clear();
-  selectedWishlist.clear();
+/* -------- DELETE -------- */
+
+function deleteWatched(index) {
+  watched.splice(index, 1);
+  save();
   render();
 }
 
-function toggleMenu(id) {
-  let menu = document.getElementById(id);
-  menu.style.display =
-    menu.style.display === "block" ? "none" : "block";
+function deleteWishlist(index) {
+  wishlist.splice(index, 1);
+  save();
+  render();
 }
+
+/* -------- FILTER SETTERS -------- */
+
+function setTimeFilter(value) {
+  timeFilter = value;
+  render();
+}
+
+function setGenreFilter(value) {
+  genreFilter = value.toLowerCase();
+  render();
+}
+
+function setTypeFilter(value) {
+  typeFilter = value.toLowerCase();
+  render();
+}
+
+/* -------- SORT -------- */
+
+function sortWatched(type) {
+
+  if (type === "date")
+    watched.sort((a,b)=> new Date(b.date) - new Date(a.date));
+
+  if (type === "rating")
+    watched.sort((a,b)=> b.rating - a.rating);
+
+  if (type === "alpha")
+    watched.sort((a,b)=> a.title.localeCompare(b.title));
+
+  if (type === "genre")
+    watched.sort((a,b)=> a.genre.localeCompare(b.genre));
+
+  if (type === "type")
+    watched.sort((a,b)=> a.type.localeCompare(b.type));
+
+  render();
+}
+
+/* -------- RENDER -------- */
 
 function render() {
 
@@ -198,129 +223,77 @@ function render() {
   watchedDiv.innerHTML = "";
   wishlistDiv.innerHTML = "";
 
-  watched
-    .filter(e => {
-      if (!currentFilter) return true;
-      if (["movie","series","book"].includes(currentFilter))
-        return e.type.toLowerCase() === currentFilter;
-      return e.genre.toLowerCase() === currentFilter;
-    })
-    .forEach((e, i) => {
+  let filteredWatched = watched.filter(e => {
 
-      watchedDiv.innerHTML += `
-        <div class="card">
-          <div class="top-row">
-            <div>
-              ${selectMode ? `<input class="checkbox" type="checkbox" onchange="toggleSelect('watched', ${i})">` : ""}
-              <strong>${e.title}</strong>
-            </div>
-            ${!selectMode ? `<span class="dot" onclick="toggleMenu('w${i}')">⋯</span>` : ""}
-          </div>
+    let match = true;
 
-          <div id="w${i}" class="menu">
-            <button onclick="deleteWatched(${i})">Delete</button>
-          </div>
+    if (timeFilter === "thisYear") {
+      match = match &&
+        e.date &&
+        new Date(e.date).getFullYear() === new Date().getFullYear();
+    }
 
-          Type: ${e.type}<br>
-          Rating: ${e.rating}/10<br>
-          Date: ${e.date}<br>
-          Genre: ${e.genre}<br>
-          Notes: ${e.notes}
+    if (timeFilter === "lastMonth") {
+      let today = new Date();
+      let lastMonth = new Date(today.getFullYear(), today.getMonth() - 1);
+      let itemDate = new Date(e.date);
+
+      match = match &&
+        itemDate.getMonth() === lastMonth.getMonth() &&
+        itemDate.getFullYear() === lastMonth.getFullYear();
+    }
+
+    if (genreFilter && genreFilter !== "all") {
+      match = match &&
+        e.genre.toLowerCase() === genreFilter;
+    }
+
+    if (typeFilter && typeFilter !== "all") {
+      match = match &&
+        e.type.toLowerCase() === typeFilter;
+    }
+
+    return match;
+  });
+
+  filteredWatched.forEach((e, i) => {
+    watchedDiv.innerHTML += `
+      <div class="card">
+        <div class="top-row">
+          <strong>${e.title}</strong>
+          <span class="dot" onclick="deleteWatched(${i})">🗑</span>
         </div>
-      `;
+        Type: ${e.type}<br>
+        Genre: ${e.genre}<br>
+        Rating: ${e.rating}/10<br>
+        Date: ${e.date}<br>
+        Notes: ${e.notes}
+      </div>
+    `;
   });
 
   wishlist.forEach((e, i) => {
     wishlistDiv.innerHTML += `
       <div class="card">
         <div class="top-row">
-          <div>
-            ${selectMode ? `<input class="checkbox" type="checkbox" onchange="toggleSelect('wishlist', ${i})">` : ""}
-            <strong>${e.title}</strong>
-          </div>
-          ${!selectMode ? `<span class="dot" onclick="toggleMenu('x${i}')">⋯</span>` : ""}
+          <strong>${e.title}</strong>
+          <span class="dot" onclick="deleteWishlist(${i})">🗑</span>
         </div>
-
-        <div id="x${i}" class="menu">
-          <button onclick="deleteWishlist(${i})">Delete</button>
-        </div>
-
         Type: ${e.type}<br>
         Genre: ${e.genre}<br>
+        Rating: ${e.rating}/10<br>
+        Date: ${e.date}<br>
         Notes: ${e.notes}
       </div>
     `;
   });
-}
 
-function filterWatched(value) {
-  currentFilter = value;
-  render();
-}
-
-function clearFilter() {
-  currentFilter = "";
-  render();
-}
-
-function toggleSelect(type, index) {
-  if (type === "watched") {
-    selectedWatched.has(index)
-      ? selectedWatched.delete(index)
-      : selectedWatched.add(index);
-  } else {
-    selectedWishlist.has(index)
-      ? selectedWishlist.delete(index)
-      : selectedWishlist.add(index);
-  }
-}
-
-function deleteWatched(index) {
-  if (confirm("Delete this item?")) {
-    watched.splice(index, 1);
-    save();
-    render();
-  }
-}
-
-function deleteWishlist(index) {
-  if (confirm("Delete this item?")) {
-    wishlist.splice(index, 1);
-    save();
-    render();
-  }
-}
-
-function deleteSelected() {
-  if (!confirm("Delete selected items?")) return;
-
-  watched = watched.filter((_, i) => !selectedWatched.has(i));
-  wishlist = wishlist.filter((_, i) => !selectedWishlist.has(i));
-
-  save();
-  toggleSelectMode();
-}
-
-function sortWatched(type) {
-  if (type === "date")
-    watched.sort((a,b)=>new Date(b.date)-new Date(a.date));
-
-  if (type === "rating")
-    watched.sort((a,b)=>b.rating-a.rating);
-
-  if (type === "alpha")
-    watched.sort((a,b)=>a.title.localeCompare(b.title));
-
-  if (type === "genre")
-    watched.sort((a,b)=>a.genre.localeCompare(b.genre));
-
-  if (type === "type")
-    watched.sort((a,b)=>a.type.localeCompare(b.type));
-
-  render();
+  document.getElementById("watchedCount").innerText =
+    "Filtered Results: " + filteredWatched.length;
 }
 
 render();
+
 </script>
 
 </body>
