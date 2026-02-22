@@ -119,6 +119,22 @@ button:hover { background: #444; }
   <option value="type">By Type</option>
 </select>
 
+<select onchange="filterWatched(this.value)">
+  <option value="">Filter Watched</option>
+  <option value="movie">Movies Only</option>
+  <option value="series">Series Only</option>
+  <option value="book">Books Only</option>
+  <option value="action">Action</option>
+  <option value="drama">Drama</option>
+  <option value="comedy">Comedy</option>
+  <option value="romance">Romance</option>
+  <option value="thriller">Thriller</option>
+  <option value="sci-fi">Sci-Fi</option>
+  <option value="horror">Horror</option>
+</select>
+
+<button onclick="clearFilter()">Clear Filter</button>
+
 <h3>Watched</h3>
 <div id="watchedList"></div>
 
@@ -131,6 +147,7 @@ let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
 let selectMode = false;
 let selectedWatched = new Set();
 let selectedWishlist = new Set();
+let currentFilter = "";
 
 function save() {
   localStorage.setItem("watched", JSON.stringify(watched));
@@ -181,28 +198,36 @@ function render() {
   watchedDiv.innerHTML = "";
   wishlistDiv.innerHTML = "";
 
-  watched.forEach((e, i) => {
-    watchedDiv.innerHTML += `
-      <div class="card">
-        <div class="top-row">
-          <div>
-            ${selectMode ? `<input class="checkbox" type="checkbox" onchange="toggleSelect('watched', ${i})">` : ""}
-            <strong>${e.title}</strong>
+  watched
+    .filter(e => {
+      if (!currentFilter) return true;
+      if (["movie","series","book"].includes(currentFilter))
+        return e.type.toLowerCase() === currentFilter;
+      return e.genre.toLowerCase() === currentFilter;
+    })
+    .forEach((e, i) => {
+
+      watchedDiv.innerHTML += `
+        <div class="card">
+          <div class="top-row">
+            <div>
+              ${selectMode ? `<input class="checkbox" type="checkbox" onchange="toggleSelect('watched', ${i})">` : ""}
+              <strong>${e.title}</strong>
+            </div>
+            ${!selectMode ? `<span class="dot" onclick="toggleMenu('w${i}')">⋯</span>` : ""}
           </div>
-          ${!selectMode ? `<span class="dot" onclick="toggleMenu('w${i}')">⋯</span>` : ""}
-        </div>
 
-        <div id="w${i}" class="menu">
-          <button onclick="deleteWatched(${i})">Delete</button>
-        </div>
+          <div id="w${i}" class="menu">
+            <button onclick="deleteWatched(${i})">Delete</button>
+          </div>
 
-        Type: ${e.type}<br>
-        Rating: ${e.rating}/10<br>
-        Date: ${e.date}<br>
-        Genre: ${e.genre}<br>
-        Notes: ${e.notes}
-      </div>
-    `;
+          Type: ${e.type}<br>
+          Rating: ${e.rating}/10<br>
+          Date: ${e.date}<br>
+          Genre: ${e.genre}<br>
+          Notes: ${e.notes}
+        </div>
+      `;
   });
 
   wishlist.forEach((e, i) => {
@@ -226,6 +251,16 @@ function render() {
       </div>
     `;
   });
+}
+
+function filterWatched(value) {
+  currentFilter = value;
+  render();
+}
+
+function clearFilter() {
+  currentFilter = "";
+  render();
 }
 
 function toggleSelect(type, index) {
