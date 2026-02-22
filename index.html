@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>CineNova Pro</title>
+<title>CineNova Premium</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --primary: #6366f1;
+  --primary: #8b5cf6; /* Vibrant Purple */
   --success: #10b981;
-  --danger: #f43f5e;
-  --bg: #0b0f1a;
-  --card-bg: #161e2d;
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --text: #ffffff;
-  --text-dim: #94a3b8;
+  --danger: #ff4bb4; /* Pinkish Red */
+  --bg: #09090b;
+  --card-bg: #18181b;
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text: #fafafa;
+  --text-dim: #a1a1aa;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -22,20 +22,23 @@
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: var(--bg);
-  background-image: radial-gradient(circle at 50% -20%, #1e1b4b, #0b0f1a);
+  background-image: 
+    radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(255, 75, 180, 0.1) 0%, transparent 40%);
   color: var(--text);
   margin: 0;
   padding: 20px 16px 100px;
+  min-height: 100vh;
 }
 
 /* Header */
-.header { margin-bottom: 20px; padding-left: 5px; }
-.header h1 { font-size: 24px; font-weight: 800; margin: 0; background: linear-gradient(to right, #fff, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.header p { color: var(--text-dim); font-size: 13px; margin: 4px 0; }
+.header { margin-bottom: 24px; }
+.header h1 { font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -1px; }
+.header p { color: var(--text-dim); font-size: 14px; margin-top: 4px; }
 
-/* Filter Bar - Slim & Subtle */
+/* Filter Bar */
 .filter-bar {
-  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 10px;
+  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 10px;
   scrollbar-width: none;
 }
 .filter-bar::-webkit-scrollbar { display: none; }
@@ -43,98 +46,105 @@ body {
 select.minimal-select {
   background: var(--card-bg);
   border: 1px solid var(--glass-border);
-  color: var(--text-dim);
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-size: 12px;
-  min-width: 100px;
-  flex-shrink: 0;
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  min-width: 110px;
+  appearance: none;
 }
 
-/* Entry Form Overlay */
+/* Add Form Overlay */
 .overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-  backdrop-filter: blur(8px); display: none; z-index: 2000;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(12px); display: none; z-index: 2000;
   align-items: center; justify-content: center; padding: 20px;
 }
 .modal {
-  background: var(--card-bg); width: 100%; max-width: 400px;
-  padding: 25px; border-radius: 28px; border: 1px solid var(--glass-border);
+  background: #111113; width: 100%; max-width: 400px;
+  padding: 24px; border-radius: 32px; border: 1px solid var(--glass-border);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-.input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+.input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
 input, select, textarea {
-  width: 100%; background: #0b0f1a; border: 1px solid var(--glass-border);
-  color: white; padding: 12px; border-radius: 12px; margin-bottom: 10px;
-  font-size: 14px; font-family: inherit;
+  width: 100%; background: #1c1c1f; border: 1px solid var(--glass-border);
+  color: white; padding: 14px; border-radius: 16px; font-size: 15px;
+  font-family: inherit; outline: none;
 }
 
-/* Cards - Content First */
-.section-label { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin: 25px 0 10px 5px; }
+/* FIX: Date Button Centering */
+input[type="date"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 48px;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  margin-left: 5px;
+  filter: invert(1); /* Makes the icon white */
+}
 
+/* Section Styling */
+.section-label { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; margin: 32px 0 12px 4px; }
+
+/* Cards - Selection Button moved to top right */
 .card {
-  background: var(--card-bg); border-radius: 20px; padding: 14px 16px;
-  margin-bottom: 10px; display: flex; align-items: center; gap: 12px;
-  border: 1px solid transparent; transition: 0.2s; position: relative;
+  background: var(--card-bg); border-radius: 24px; padding: 18px;
+  margin-bottom: 12px; border: 1px solid var(--glass-border);
+  position: relative; transition: transform 0.2s;
 }
-.card:active { transform: scale(0.98); background: #1c2537; }
 
 .card-check {
-  width: 18px; height: 18px; accent-color: var(--primary);
-  opacity: 0.4; transition: 0.3s;
-}
-.card-check:checked { opacity: 1; }
-
-.card-info { flex: 1; }
-.card-info h3 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
-.card-meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
-.type-tag { font-size: 10px; color: var(--text-dim); text-transform: uppercase; border: 1px solid #334155; padding: 1px 6px; border-radius: 4px; }
-.rating-tag { font-size: 10px; font-weight: 800; color: #fbbf24; }
-
-/* 3-Dots Menu */
-.dots-btn { background: none; border: none; color: var(--text-dim); padding: 5px 10px; font-size: 18px; }
-.menu-pop {
-  position: absolute; right: 10px; top: 40px; background: #1e293b; 
-  border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  display: none; z-index: 100; overflow: hidden;
-}
-.menu-pop button {
-  display: block; width: 100%; padding: 12px 20px; border: none;
-  background: none; color: white; text-align: left; font-size: 13px;
+  position: absolute;
+  top: 18px;
+  right: 45px; /* Positioned left of the 3-dots */
+  width: 20px; height: 20px;
+  accent-color: var(--primary);
+  z-index: 10;
 }
 
-/* Discreet FAB */
+.card-info h3 { margin: 0 40px 0 0; font-size: 17px; font-weight: 600; line-height: 1.3; }
+.card-meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.tag { font-size: 11px; color: var(--text-dim); background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 6px; font-weight: 500; }
+.rating { color: #fbbf24; font-weight: 800; font-size: 12px; }
+
+.dots-btn { position: absolute; top: 12px; right: 8px; background: none; border: none; color: var(--text-dim); padding: 10px; font-size: 20px; }
+
+/* Floating Action Button */
 .fab {
-  position: fixed; bottom: 25px; right: 25px;
-  width: 52px; height: 52px; border-radius: 18px;
+  position: fixed; bottom: 30px; right: 24px;
+  width: 56px; height: 56px; border-radius: 20px;
   background: var(--primary); border: none; color: white;
-  font-size: 24px; box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+  font-size: 28px; box-shadow: 0 10px 20px rgba(139, 92, 246, 0.4);
   z-index: 1000;
 }
 
 /* Top Delete Bar */
 .delete-bar {
-  position: fixed; top: 0; left: 0; width: 100%; height: 55px;
+  position: fixed; top: 0; left: 0; width: 100%; height: 64px;
   background: var(--danger); display: none; align-items: center;
-  justify-content: space-between; padding: 0 20px; z-index: 3000; font-weight: 600;
+  justify-content: space-between; padding: 0 24px; z-index: 3000; font-weight: 700;
 }
 </style>
 </head>
 <body>
 
 <div class="delete-bar" id="deleteBar">
-  <span id="selCount">0 items</span>
-  <button onclick="deleteBulk()" style="background:white; color:var(--danger); border:none; padding:6px 12px; border-radius:8px; font-weight:bold;">Delete</button>
+  <span id="selCount">0 Items</span>
+  <button onclick="deleteBulk()" style="background:white; color:var(--danger); border:none; padding:8px 16px; border-radius:12px; font-weight:800;">Delete Selected</button>
 </div>
 
 <div class="header">
   <h1>CineNova</h1>
-  <p id="stats">Keeping track of your journey</p>
+  <p id="stats">Your personal library</p>
 </div>
 
 <div class="filter-bar">
-  <select id="fType" class="minimal-select" onchange="render()"><option value="all">All Types</option><option>Movie</option><option>Series</option><option>Book</option></select>
-  <select id="fGenre" class="minimal-select" onchange="render()"><option value="all">All Genres</option>
+  <select id="fType" class="minimal-select" onchange="render()"><option value="all">Types</option><option>Movie</option><option>Series</option><option>Book</option></select>
+  <select id="fGenre" class="minimal-select" onchange="render()"><option value="all">Genres</option>
     <option>Action</option><option>Drama</option><option>Comedy</option><option>Romance</option><option>Thriller</option><option>Sci-Fi</option><option>Horror</option><option>Mystery</option><option>Superhero</option><option>Spy</option><option>FamilyDrama</option><option>Fantasy</option><option>Animation</option><option>Cartoon</option><option>Documentary</option><option>Biography</option><option>Travel</option><option>Musical</option><option>Crime</option><option>RealityShow</option><option>GameShow</option><option>TalkShow</option>
   </select>
   <select id="fSort" class="minimal-select" onchange="render()"><option value="newest">Recent</option><option value="alpha">A-Z</option><option value="rating">Top Rated</option></select>
@@ -145,8 +155,8 @@ input, select, textarea {
 
 <div class="overlay" id="addOverlay" onclick="closeForm(event)">
   <div class="modal" onclick="event.stopPropagation()">
-    <h2 style="margin: 0 0 20px; font-size: 18px;">Add New</h2>
-    <input id="title" placeholder="Title">
+    <h2 style="margin: 0 0 20px; font-size: 20px; font-weight: 800;">Add New</h2>
+    <input id="title" placeholder="Title" style="margin-bottom: 12px;">
     <div class="input-grid">
       <select id="type"><option>Movie</option><option>Series</option><option>Book</option></select>
       <select id="genre"><option value="">Genre</option>
@@ -154,13 +164,13 @@ input, select, textarea {
       </select>
     </div>
     <div class="input-grid">
-      <input id="rating" type="number" placeholder="Rating/10">
+      <input id="rating" type="number" placeholder="Rating">
       <input id="date" type="date">
     </div>
-    <textarea id="notes" placeholder="Quick thoughts..."></textarea>
-    <div style="display:flex; gap:10px;">
-      <button onclick="addItem('watched')" style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:12px; font-weight:600;">+ Watched</button>
-      <button onclick="addItem('wishlist')" style="flex:1; background:var(--success); color:white; border:none; padding:12px; border-radius:12px; font-weight:600;">+ Wishlist</button>
+    <textarea id="notes" placeholder="Notes..." rows="3" style="margin-bottom: 20px;"></textarea>
+    <div style="display:flex; gap:12px;">
+      <button onclick="addItem('watched')" style="flex:1.2; background:var(--primary); color:white; border:none; padding:16px; border-radius:18px; font-weight:700;">+ Watched</button>
+      <button onclick="addItem('wishlist')" style="flex:1; background:var(--success); color:white; border:none; padding:16px; border-radius:18px; font-weight:700;">+ Wishlist</button>
     </div>
   </div>
 </div>
@@ -168,9 +178,8 @@ input, select, textarea {
 <button class="fab" onclick="document.getElementById('addOverlay').style.display='flex'">+</button>
 
 <script>
-let items = JSON.parse(localStorage.getItem("cine_v4")) || { watched: [], wishlist: [] };
-
-function save() { localStorage.setItem("cine_v4", JSON.stringify(items)); }
+let items = JSON.parse(localStorage.getItem("cine_final_v1")) || { watched: [], wishlist: [] };
+function save() { localStorage.setItem("cine_final_v1", JSON.stringify(items)); }
 
 function addItem(list) {
   const title = document.getElementById('title').value;
@@ -186,23 +195,14 @@ function addItem(list) {
   items[list].unshift(item);
   save(); render();
   document.getElementById('addOverlay').style.display = 'none';
-  document.getElementById('title').value = "";
+  document.getElementById('title').value = ""; document.getElementById('notes').value = "";
 }
 
 function closeForm(e) { document.getElementById('addOverlay').style.display = 'none'; }
-
-function togglePop(id) {
-  const pop = document.getElementById('p'+id);
-  const isVisible = pop.style.display === 'block';
-  document.querySelectorAll('.menu-pop').forEach(m => m.style.display = 'none');
-  pop.style.display = isVisible ? 'none' : 'block';
-}
-
-function deleteOne(list, id) { items[list] = items[list].filter(i => i.id !== id); save(); render(); }
+function deleteOne(list, id) { if(confirm("Delete this?")) { items[list] = items[list].filter(i => i.id !== id); save(); render(); } }
 function moveOne(id) {
   const idx = items.wishlist.findIndex(i => i.id === id);
-  const item = items.wishlist.splice(idx, 1)[0];
-  items.watched.unshift(item);
+  items.watched.unshift(items.wishlist.splice(idx, 1)[0]);
   save(); render();
 }
 
@@ -214,7 +214,7 @@ function updateSelectCount() {
 
 function deleteBulk() {
   const checked = document.querySelectorAll('.card-check:checked');
-  if(confirm("Delete selected?")) {
+  if(confirm(`Delete ${checked.length} items?`)) {
     checked.forEach(cb => {
       const id = parseInt(cb.value);
       items.watched = items.watched.filter(i => i.id !== id);
@@ -232,9 +232,7 @@ function render() {
   ['watched', 'wishlist'].forEach(list => {
     const div = document.getElementById(list + 'List');
     div.innerHTML = `<div class="section-label">${list}</div>`;
-    
     let filtered = items[list].filter(i => (fType === 'all' || i.type === fType) && (fGenre === 'all' || i.genre === fGenre));
-    
     filtered.sort((a,b) => {
       if(fSort === 'alpha') return a.title.localeCompare(b.title);
       if(fSort === 'rating') return b.rating - a.rating;
@@ -246,18 +244,19 @@ function render() {
       card.className = 'card';
       card.innerHTML = `
         <input type="checkbox" class="card-check" value="${item.id}" onchange="updateSelectCount()">
-        <div class="card-info" onclick="togglePop(${item.id})">
+        <div class="card-info">
           <h3>${item.title}</h3>
           <div class="card-meta">
-            <span class="type-tag">${item.type}</span>
-            <span style="font-size:10px; color:var(--text-dim)">${item.genre}</span>
-            ${item.rating > 0 ? `<span class="rating-tag">★ ${item.rating}</span>` : ''}
+            <span class="tag" style="background:rgba(139,92,246,0.15); color:var(--primary)">${item.type}</span>
+            <span class="tag">${item.genre}</span>
+            ${item.rating > 0 ? `<span class="rating">★ ${item.rating}</span>` : ''}
           </div>
+          ${item.notes ? `<p style="font-size:12px; color:var(--text-dim); margin:8px 0 0;">${item.notes}</p>` : ''}
         </div>
-        <button class="dots-btn" onclick="togglePop(${item.id})">⋮</button>
-        <div class="menu-pop" id="p${item.id}">
-          ${list === 'wishlist' ? `<button onclick="moveOne(${item.id})" style="color:var(--success)">Move to Watched</button>` : ''}
-          <button onclick="deleteOne('${list}', ${item.id})" style="color:var(--danger)">Delete</button>
+        <button class="dots-btn" onclick="this.nextElementSibling.style.display='block'">⋮</button>
+        <div style="display:none; position:absolute; right:10px; top:45px; background:#27272a; border-radius:12px; z-index:100; overflow:hidden; border:1px solid var(--glass-border);">
+          ${list === 'wishlist' ? `<button onclick="moveOne(${item.id})" style="display:block; width:100%; padding:12px; background:none; border:none; color:var(--success); text-align:left; font-size:13px; font-weight:600; border-bottom:1px solid rgba(255,255,255,0.05)">Move to Watched</button>` : ''}
+          <button onclick="deleteOne('${list}', ${item.id})" style="display:block; width:100%; padding:12px; background:none; border:none; color:var(--danger); text-align:left; font-size:13px; font-weight:600;">Delete</button>
         </div>
       `;
       div.appendChild(card);
@@ -266,9 +265,13 @@ function render() {
   document.getElementById('stats').innerText = `${items.watched.length} watched • ${items.wishlist.length} wishlist`;
 }
 
+// Close menus when clicking anywhere
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.dots-btn') && !e.target.closest('.card-info')) {
-    document.querySelectorAll('.menu-pop').forEach(m => m.style.display = 'none');
+  if (!e.target.closest('.dots-btn')) {
+    document.querySelectorAll('[style*="display: block"]').forEach(el => {
+      if(el.classList.contains('overlay')) return;
+      el.style.display = 'none';
+    });
   }
 });
 
