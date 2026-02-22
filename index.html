@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Procastination Productions</title>
+<title>Procrastination Productions</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --primary: #8b5cf6; /* Vibrant Purple */
+  --primary: #a78bfa;
   --success: #10b981;
-  --danger: #ff4bb4; /* Pinkish Red */
+  --danger: #ff4bb4;
   --bg: #09090b;
   --card-bg: #18181b;
+  --input-bg: #27272a;
   --glass-border: rgba(255, 255, 255, 0.1);
   --text: #fafafa;
   --text-dim: #a1a1aa;
@@ -23,108 +24,120 @@ body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: var(--bg);
   background-image: 
-    radial-gradient(circle at 0% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 100% 100%, rgba(255, 75, 180, 0.1) 0%, transparent 40%);
+    radial-gradient(circle at 0% 0%, rgba(167, 139, 250, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(255, 75, 180, 0.08) 0%, transparent 40%);
   color: var(--text);
   margin: 0;
   padding: 20px 16px 100px;
   min-height: 100vh;
 }
 
-/* Header */
-.header { margin-bottom: 24px; }
+/* Header & Stats */
+.header { margin-bottom: 24px; padding-left: 4px; }
 .header h1 { font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -1px; }
-.header p { color: var(--text-dim); font-size: 14px; margin-top: 4px; }
+.header p { color: var(--text-dim); font-size: 13px; margin-top: 4px; font-weight: 500; }
 
 /* Filter Bar */
 .filter-bar {
-  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 10px;
+  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 5px;
   scrollbar-width: none;
 }
 .filter-bar::-webkit-scrollbar { display: none; }
 
-select.minimal-select {
+.minimal-select {
   background: var(--card-bg);
   border: 1px solid var(--glass-border);
   color: var(--text);
-  padding: 10px 14px;
+  padding: 10px 16px;
   border-radius: 14px;
   font-size: 13px;
-  min-width: 110px;
-  appearance: none;
+  min-width: 105px;
+  outline: none;
 }
 
-/* Add Form Overlay */
+/* Modal Overlay */
 .overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-  backdrop-filter: blur(12px); display: none; z-index: 2000;
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(15px); display: none; z-index: 2000;
   align-items: center; justify-content: center; padding: 20px;
 }
 .modal {
-  background: #111113; width: 100%; max-width: 400px;
-  padding: 24px; border-radius: 32px; border: 1px solid var(--glass-border);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  background: #111113; width: 100%; max-width: 380px;
+  padding: 28px; border-radius: 32px; border: 1px solid var(--glass-border);
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
 }
 
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 
 input, select, textarea {
-  width: 100%; background: #1c1c1f; border: 1px solid var(--glass-border);
+  width: 100%; background: var(--input-bg); border: 1px solid var(--glass-border);
   color: white; padding: 14px; border-radius: 16px; font-size: 15px;
-  font-family: inherit; outline: none;
+  font-family: inherit; outline: none; transition: 0.2s;
 }
 
-/* FIX: Date Button Centering */
+/* THE ULTIMATE DATE FIX */
 input[type="date"] {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 50px;
+  display: block;
   text-align: center;
-  min-height: 48px;
-}
-input[type="date"]::-webkit-calendar-picker-indicator {
-  margin-left: 5px;
-  filter: invert(1); /* Makes the icon white */
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
-/* Section Styling */
-.section-label { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; margin: 32px 0 12px 4px; }
+/* Section styling */
+.section-label { font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; margin: 30px 0 12px 6px; }
 
-/* Cards - Selection Button moved to top right */
+/* Cards */
 .card {
-  background: var(--card-bg); border-radius: 24px; padding: 18px;
+  background: var(--card-bg); border-radius: 24px; padding: 18px 20px;
   margin-bottom: 12px; border: 1px solid var(--glass-border);
-  position: relative; transition: transform 0.2s;
+  position: relative; display: flex; align-items: flex-start;
 }
 
-.card-check {
-  position: absolute;
-  top: 18px;
-  right: 45px; /* Positioned left of the 3-dots */
-  width: 20px; height: 20px;
-  accent-color: var(--primary);
-  z-index: 10;
+.card-info { flex: 1; padding-right: 60px; } /* Space for top-right tools */
+.card-info h3 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.3; }
+
+.meta-tags { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.tag { font-size: 10px; color: var(--text-dim); background: rgba(255,255,255,0.06); padding: 2px 8px; border-radius: 6px; font-weight: 600; text-transform: uppercase; }
+.rating-pill { color: #fbbf24; font-weight: 800; font-size: 11px; }
+
+/* Top-Right Control Group */
+.card-controls {
+  position: absolute; top: 18px; right: 12px;
+  display: flex; align-items: center; gap: 10px;
 }
 
-.card-info h3 { margin: 0 40px 0 0; font-size: 17px; font-weight: 600; line-height: 1.3; }
-.card-meta { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-.tag { font-size: 11px; color: var(--text-dim); background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 6px; font-weight: 500; }
-.rating { color: #fbbf24; font-weight: 800; font-size: 12px; }
+.card-check { width: 18px; height: 18px; accent-color: var(--primary); margin: 0; cursor: pointer; }
 
-.dots-btn { position: absolute; top: 12px; right: 8px; background: none; border: none; color: var(--text-dim); padding: 10px; font-size: 20px; }
+.dots-btn { background: none; border: none; color: var(--text-dim); font-size: 20px; padding: 0 4px; cursor: pointer; }
+
+/* Dropdown Menu */
+.menu-pop {
+  display: none; position: absolute; right: 12px; top: 48px; 
+  background: #27272a; border-radius: 14px; z-index: 100; 
+  overflow: hidden; border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+}
+.menu-pop button {
+  display: block; width: 100%; padding: 12px 20px; background: none; 
+  border: none; color: white; text-align: left; font-size: 13px; font-weight: 600;
+}
 
 /* Floating Action Button */
 .fab {
-  position: fixed; bottom: 30px; right: 24px;
-  width: 56px; height: 56px; border-radius: 20px;
+  position: fixed; bottom: 25px; right: 25px;
+  width: 58px; height: 58px; border-radius: 20px;
   background: var(--primary); border: none; color: white;
-  font-size: 28px; box-shadow: 0 10px 20px rgba(139, 92, 246, 0.4);
+  font-size: 28px; box-shadow: 0 12px 24px rgba(167, 139, 240, 0.4);
   z-index: 1000;
 }
 
-/* Top Delete Bar */
+/* Delete Bar */
 .delete-bar {
-  position: fixed; top: 0; left: 0; width: 100%; height: 64px;
+  position: fixed; top: 0; left: 0; width: 100%; height: 65px;
   background: var(--danger); display: none; align-items: center;
   justify-content: space-between; padding: 0 24px; z-index: 3000; font-weight: 700;
 }
@@ -133,21 +146,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 <body>
 
 <div class="delete-bar" id="deleteBar">
-  <span id="selCount">0 Items</span>
-  <button onclick="deleteBulk()" style="background:white; color:var(--danger); border:none; padding:8px 16px; border-radius:12px; font-weight:800;">Delete Selected</button>
+  <span id="selCount">0 Selected</span>
+  <button onclick="deleteBulk()" style="background:white; color:var(--danger); border:none; padding:8px 16px; border-radius:12px; font-weight:800;">Remove Selected</button>
 </div>
 
 <div class="header">
   <h1>CineNova</h1>
-  <p id="stats">Your personal library</p>
+  <p id="stats">0 Titles Tracked</p>
 </div>
 
 <div class="filter-bar">
-  <select id="fType" class="minimal-select" onchange="render()"><option value="all">Types</option><option>Movie</option><option>Series</option><option>Book</option></select>
-  <select id="fGenre" class="minimal-select" onchange="render()"><option value="all">Genres</option>
+  <select id="fType" class="minimal-select" onchange="render()"><option value="all">All Types</option><option>Movie</option><option>Series</option><option>Book</option></select>
+  <select id="fGenre" class="minimal-select" onchange="render()"><option value="all">All Genres</option>
     <option>Action</option><option>Drama</option><option>Comedy</option><option>Romance</option><option>Thriller</option><option>Sci-Fi</option><option>Horror</option><option>Mystery</option><option>Superhero</option><option>Spy</option><option>FamilyDrama</option><option>Fantasy</option><option>Animation</option><option>Cartoon</option><option>Documentary</option><option>Biography</option><option>Travel</option><option>Musical</option><option>Crime</option><option>RealityShow</option><option>GameShow</option><option>TalkShow</option>
   </select>
-  <select id="fSort" class="minimal-select" onchange="render()"><option value="newest">Recent</option><option value="alpha">A-Z</option><option value="rating">Top Rated</option></select>
+  <select id="fSort" class="minimal-select" onchange="render()"><option value="newest">Recent</option><option value="alpha">A-Z</option><option value="rating">Rating</option></select>
 </div>
 
 <div id="watchedList"></div>
@@ -155,7 +168,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 <div class="overlay" id="addOverlay" onclick="closeForm(event)">
   <div class="modal" onclick="event.stopPropagation()">
-    <h2 style="margin: 0 0 20px; font-size: 20px; font-weight: 800;">Add New</h2>
+    <h2 style="margin: 0 0 22px; font-size: 20px; font-weight: 800;">New Entry</h2>
     <input id="title" placeholder="Title" style="margin-bottom: 12px;">
     <div class="input-grid">
       <select id="type"><option>Movie</option><option>Series</option><option>Book</option></select>
@@ -164,13 +177,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       </select>
     </div>
     <div class="input-grid">
-      <input id="rating" type="number" placeholder="Rating">
+      <input id="rating" type="number" placeholder="Rating 1-10">
       <input id="date" type="date">
     </div>
-    <textarea id="notes" placeholder="Notes..." rows="3" style="margin-bottom: 20px;"></textarea>
+    <textarea id="notes" placeholder="Quick notes..." rows="3" style="margin-bottom: 22px;"></textarea>
     <div style="display:flex; gap:12px;">
-      <button onclick="addItem('watched')" style="flex:1.2; background:var(--primary); color:white; border:none; padding:16px; border-radius:18px; font-weight:700;">+ Watched</button>
-      <button onclick="addItem('wishlist')" style="flex:1; background:var(--success); color:white; border:none; padding:16px; border-radius:18px; font-weight:700;">+ Wishlist</button>
+      <button onclick="addItem('watched')" style="flex:1.2; background:var(--primary); color:white; border:none; padding:16px; border-radius:18px; font-weight:700;">Watched</button>
+      <button onclick="addItem('wishlist')" style="flex:1; background:var(--success); color:white; border:none; padding:16px; border-radius:18px; font-weight:700;">Wishlist</button>
     </div>
   </div>
 </div>
@@ -178,8 +191,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 <button class="fab" onclick="document.getElementById('addOverlay').style.display='flex'">+</button>
 
 <script>
-let items = JSON.parse(localStorage.getItem("cine_final_v1")) || { watched: [], wishlist: [] };
-function save() { localStorage.setItem("cine_final_v1", JSON.stringify(items)); }
+let items = JSON.parse(localStorage.getItem("cine_final_v2")) || { watched: [], wishlist: [] };
+function save() { localStorage.setItem("cine_final_v2", JSON.stringify(items)); }
 
 function addItem(list) {
   const title = document.getElementById('title').value;
@@ -195,11 +208,11 @@ function addItem(list) {
   items[list].unshift(item);
   save(); render();
   document.getElementById('addOverlay').style.display = 'none';
-  document.getElementById('title').value = ""; document.getElementById('notes').value = "";
+  ['title', 'notes', 'rating'].forEach(id => document.getElementById(id).value = "");
 }
 
 function closeForm(e) { document.getElementById('addOverlay').style.display = 'none'; }
-function deleteOne(list, id) { if(confirm("Delete this?")) { items[list] = items[list].filter(i => i.id !== id); save(); render(); } }
+function deleteOne(list, id) { if(confirm("Remove this item?")) { items[list] = items[list].filter(i => i.id !== id); save(); render(); } }
 function moveOne(id) {
   const idx = items.wishlist.findIndex(i => i.id === id);
   items.watched.unshift(items.wishlist.splice(idx, 1)[0]);
@@ -243,35 +256,40 @@ function render() {
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
-        <input type="checkbox" class="card-check" value="${item.id}" onchange="updateSelectCount()">
         <div class="card-info">
           <h3>${item.title}</h3>
-          <div class="card-meta">
-            <span class="tag" style="background:rgba(139,92,246,0.15); color:var(--primary)">${item.type}</span>
+          <div class="meta-tags">
+            <span class="tag" style="background:rgba(167,139,250,0.1); color:var(--primary)">${item.type}</span>
             <span class="tag">${item.genre}</span>
-            ${item.rating > 0 ? `<span class="rating">★ ${item.rating}</span>` : ''}
+            ${item.rating > 0 ? `<span class="rating-pill">★ ${item.rating}</span>` : ''}
           </div>
-          ${item.notes ? `<p style="font-size:12px; color:var(--text-dim); margin:8px 0 0;">${item.notes}</p>` : ''}
+          ${item.notes ? `<p style="font-size:12px; color:var(--text-dim); margin:10px 0 0; line-height:1.4;">${item.notes}</p>` : ''}
         </div>
-        <button class="dots-btn" onclick="this.nextElementSibling.style.display='block'">⋮</button>
-        <div style="display:none; position:absolute; right:10px; top:45px; background:#27272a; border-radius:12px; z-index:100; overflow:hidden; border:1px solid var(--glass-border);">
-          ${list === 'wishlist' ? `<button onclick="moveOne(${item.id})" style="display:block; width:100%; padding:12px; background:none; border:none; color:var(--success); text-align:left; font-size:13px; font-weight:600; border-bottom:1px solid rgba(255,255,255,0.05)">Move to Watched</button>` : ''}
-          <button onclick="deleteOne('${list}', ${item.id})" style="display:block; width:100%; padding:12px; background:none; border:none; color:var(--danger); text-align:left; font-size:13px; font-weight:600;">Delete</button>
+        <div class="card-controls">
+          <input type="checkbox" class="card-check" value="${item.id}" onchange="updateSelectCount()">
+          <button class="dots-btn" onclick="toggleMenu(${item.id})">⋮</button>
+          <div class="menu-pop" id="m${item.id}">
+            ${list === 'wishlist' ? `<button onclick="moveOne(${item.id})" style="color:var(--success); border-bottom:1px solid rgba(255,255,255,0.05)">Complete</button>` : ''}
+            <button onclick="deleteOne('${list}', ${item.id})" style="color:var(--danger)">Delete</button>
+          </div>
         </div>
       `;
       div.appendChild(card);
     });
   });
-  document.getElementById('stats').innerText = `${items.watched.length} watched • ${items.wishlist.length} wishlist`;
+  document.getElementById('stats').innerText = `${items.watched.length + items.wishlist.length} Titles Tracked`;
 }
 
-// Close menus when clicking anywhere
+function toggleMenu(id) {
+  const el = document.getElementById('m'+id);
+  const isVisible = el.style.display === 'block';
+  document.querySelectorAll('.menu-pop').forEach(m => m.style.display = 'none');
+  el.style.display = isVisible ? 'none' : 'block';
+}
+
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.dots-btn')) {
-    document.querySelectorAll('[style*="display: block"]').forEach(el => {
-      if(el.classList.contains('overlay')) return;
-      el.style.display = 'none';
-    });
+    document.querySelectorAll('.menu-pop').forEach(m => m.style.display = 'none');
   }
 });
 
