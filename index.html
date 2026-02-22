@@ -1,60 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Media Tracker</title>
+<title>CineNova Tracker</title>
 
 <style>
 body {
-  font-family: Arial;
-  background: #f4f4f4;
+  font-family: Arial, sans-serif;
+  background: #f2f4f8;
   padding: 20px;
 }
+
+h2 { margin-top: 30px; }
 
 input, select, textarea, button {
   margin: 5px;
   padding: 6px;
 }
 
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background: #3b82f6;
+  color: white;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
 .card {
   background: white;
   padding: 12px;
   margin: 10px 0;
-  border-radius: 6px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .top-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
-.dot {
-  cursor: pointer;
+.action-btn {
+  background: #10b981;
+  margin-left: 5px;
+}
+
+.delete-btn {
+  background: #ef4444;
+}
+
+.small-btn {
+  font-size: 12px;
+  padding: 4px 6px;
 }
 
 .section {
   margin-top: 30px;
 }
 </style>
-
 </head>
 <body>
 
 <h2>Add Media</h2>
 
 <input id="title" placeholder="Title">
-
 <select id="type">
-  <option value="Movie">Movie</option>
-  <option value="Series">Series</option>
-  <option value="Book">Book</option>
+  <option>Movie</option>
+  <option>Series</option>
+  <option>Book</option>
 </select>
-
 <input id="genre" placeholder="Genre">
 <input id="rating" type="number" placeholder="Rating (1-10)">
 <input id="date" type="date">
 <textarea id="notes" placeholder="Notes"></textarea>
-
 <br>
 <button onclick="addWatched()">Add to Watched</button>
 <button onclick="addWishlist()">Add to Wishlist</button>
@@ -116,23 +137,19 @@ let timeFilter = "";
 let genreFilter = "";
 let typeFilter = "";
 
-/* -------- SAVE -------- */
-
 function save() {
   localStorage.setItem("watched", JSON.stringify(watched));
   localStorage.setItem("wishlist", JSON.stringify(wishlist));
 }
 
-/* -------- GET FORM DATA -------- */
-
 function getFormData() {
   return {
-    title: document.getElementById("title").value,
-    type: document.getElementById("type").value,
-    genre: document.getElementById("genre").value,
-    rating: document.getElementById("rating").value,
-    date: document.getElementById("date").value,
-    notes: document.getElementById("notes").value
+    title: title.value,
+    type: type.value,
+    genre: genre.value,
+    rating: rating.value,
+    date: date.value,
+    notes: notes.value
   };
 }
 
@@ -143,8 +160,6 @@ function clearForm() {
   date.value = "";
   notes.value = "";
 }
-
-/* -------- ADD -------- */
 
 function addWatched() {
   watched.push(getFormData());
@@ -160,21 +175,30 @@ function addWishlist() {
   clearForm();
 }
 
-/* -------- DELETE -------- */
-
 function deleteWatched(index) {
-  watched.splice(index, 1);
-  save();
-  render();
+  if (confirm("Delete this item from Watched?")) {
+    watched.splice(index, 1);
+    save();
+    render();
+  }
 }
 
 function deleteWishlist(index) {
-  wishlist.splice(index, 1);
-  save();
-  render();
+  if (confirm("Delete this item from Wishlist?")) {
+    wishlist.splice(index, 1);
+    save();
+    render();
+  }
 }
 
-/* -------- FILTER SETTERS -------- */
+function moveToWatched(index) {
+  if (confirm("Move this to Watched?")) {
+    watched.push(wishlist[index]);
+    wishlist.splice(index, 1);
+    save();
+    render();
+  }
+}
 
 function setTimeFilter(value) {
   timeFilter = value;
@@ -191,77 +215,54 @@ function setTypeFilter(value) {
   render();
 }
 
-/* -------- SORT -------- */
-
 function sortWatched(type) {
-
   if (type === "date")
-    watched.sort((a,b)=> new Date(b.date) - new Date(a.date));
-
+    watched.sort((a,b)=> new Date(b.date)-new Date(a.date));
   if (type === "rating")
-    watched.sort((a,b)=> b.rating - a.rating);
-
+    watched.sort((a,b)=> b.rating-a.rating);
   if (type === "alpha")
     watched.sort((a,b)=> a.title.localeCompare(b.title));
-
   if (type === "genre")
     watched.sort((a,b)=> a.genre.localeCompare(b.genre));
-
   if (type === "type")
     watched.sort((a,b)=> a.type.localeCompare(b.type));
-
   render();
 }
 
-/* -------- RENDER -------- */
-
 function render() {
 
-  const watchedDiv = document.getElementById("watchedList");
-  const wishlistDiv = document.getElementById("wishlist");
+  watchedList.innerHTML = "";
+  wishlist.innerHTML = "";
 
-  watchedDiv.innerHTML = "";
-  wishlistDiv.innerHTML = "";
-
-  let filteredWatched = watched.filter(e => {
+  let filtered = watched.filter(e => {
 
     let match = true;
 
-    if (timeFilter === "thisYear") {
-      match = match &&
-        e.date &&
-        new Date(e.date).getFullYear() === new Date().getFullYear();
-    }
+    if (timeFilter === "thisYear")
+      match = match && e.date && new Date(e.date).getFullYear() === new Date().getFullYear();
 
     if (timeFilter === "lastMonth") {
       let today = new Date();
-      let lastMonth = new Date(today.getFullYear(), today.getMonth() - 1);
-      let itemDate = new Date(e.date);
-
-      match = match &&
-        itemDate.getMonth() === lastMonth.getMonth() &&
-        itemDate.getFullYear() === lastMonth.getFullYear();
+      let lastMonth = new Date(today.getFullYear(), today.getMonth()-1);
+      let d = new Date(e.date);
+      match = match && d.getMonth()===lastMonth.getMonth() && d.getFullYear()===lastMonth.getFullYear();
     }
 
-    if (genreFilter && genreFilter !== "all") {
-      match = match &&
-        e.genre.toLowerCase() === genreFilter;
-    }
+    if (genreFilter && genreFilter !== "all")
+      match = match && e.genre.toLowerCase()===genreFilter;
 
-    if (typeFilter && typeFilter !== "all") {
-      match = match &&
-        e.type.toLowerCase() === typeFilter;
-    }
+    if (typeFilter && typeFilter !== "all")
+      match = match && e.type.toLowerCase()===typeFilter;
 
     return match;
   });
 
-  filteredWatched.forEach((e, i) => {
-    watchedDiv.innerHTML += `
+  filtered.forEach((e,i)=>{
+    watchedList.innerHTML += `
       <div class="card">
         <div class="top-row">
           <strong>${e.title}</strong>
-          <span class="dot" onclick="deleteWatched(${i})">🗑</span>
+          <button class="delete-btn small-btn" onclick="deleteWatched(${i})">Delete</button>
         </div>
         Type: ${e.type}<br>
         Genre: ${e.genre}<br>
@@ -272,12 +273,15 @@ function render() {
     `;
   });
 
-  wishlist.forEach((e, i) => {
-    wishlistDiv.innerHTML += `
+  wishlist.forEach((e,i)=>{
+    wishlist.innerHTML += `
       <div class="card">
         <div class="top-row">
           <strong>${e.title}</strong>
-          <span class="dot" onclick="deleteWishlist(${i})">🗑</span>
+          <div>
+            <button class="action-btn small-btn" onclick="moveToWatched(${i})">Move</button>
+            <button class="delete-btn small-btn" onclick="deleteWishlist(${i})">Delete</button>
+          </div>
         </div>
         Type: ${e.type}<br>
         Genre: ${e.genre}<br>
@@ -288,8 +292,7 @@ function render() {
     `;
   });
 
-  document.getElementById("watchedCount").innerText =
-    "Filtered Results: " + filteredWatched.length;
+  watchedCount.innerText = "Filtered Results: " + filtered.length;
 }
 
 render();
