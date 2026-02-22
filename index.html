@@ -6,35 +6,46 @@
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #f2f4f8;
-  padding: 20px;
+  background: linear-gradient(to right, #eef2f7, #f8fafc);
+  padding: 30px;
+  max-width: 900px;
+  margin: auto;
 }
 
-h2 { margin-top: 30px; }
+h2 {
+  margin-top: 40px;
+  color: #1e293b;
+}
 
-input, select, textarea, button {
-  margin: 5px;
-  padding: 6px;
+input, select, textarea {
+  padding: 8px;
+  margin: 5px 5px 10px 0;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
 }
 
 button {
-  cursor: pointer;
+  padding: 8px 12px;
+  margin: 5px 5px 5px 0;
   border: none;
-  border-radius: 5px;
-  background: #3b82f6;
-  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
 }
 
-button:hover {
-  opacity: 0.85;
-}
+.primary { background: #3b82f6; color: white; }
+.success { background: #10b981; color: white; }
+.danger  { background: #ef4444; color: white; }
+.secondary { background: #64748b; color: white; }
+
+button:hover { opacity: 0.85; }
 
 .card {
   background: white;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  padding: 15px;
+  margin: 12px 0;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .top-row {
@@ -43,24 +54,19 @@ button:hover {
   align-items: center;
 }
 
-.action-btn {
-  background: #10b981;
-  margin-left: 5px;
-}
-
-.delete-btn {
-  background: #ef4444;
-}
-
-.small-btn {
-  font-size: 12px;
-  padding: 4px 6px;
-}
-
 .section {
-  margin-top: 30px;
+  margin-top: 40px;
+}
+
+.filter-box {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 </style>
+
 </head>
 <body>
 
@@ -77,12 +83,11 @@ button:hover {
 <input id="date" type="date">
 <textarea id="notes" placeholder="Notes"></textarea>
 <br>
-<button onclick="addWatched()">Add to Watched</button>
-<button onclick="addWishlist()">Add to Wishlist</button>
+<button class="primary" onclick="addWatched()">Add to Watched</button>
+<button class="success" onclick="addWishlist()">Add to Wishlist</button>
 
-<hr>
-
-<h2>Advanced Filters</h2>
+<div class="filter-box">
+<h2>Filters</h2>
 
 <select onchange="setTimeFilter(this.value)">
   <option value="">All Time</option>
@@ -106,17 +111,14 @@ button:hover {
 </select>
 
 <p id="watchedCount"></p>
-
-<hr>
+</div>
 
 <h2>Sort</h2>
-<button onclick="sortWatched('date')">By Date</button>
-<button onclick="sortWatched('rating')">By Rating</button>
-<button onclick="sortWatched('alpha')">Alphabetical</button>
-<button onclick="sortWatched('genre')">By Genre</button>
-<button onclick="sortWatched('type')">By Type</button>
-
-<hr>
+<button class="secondary" onclick="sortWatched('date')">By Date</button>
+<button class="secondary" onclick="sortWatched('rating')">By Rating</button>
+<button class="secondary" onclick="sortWatched('alpha')">Alphabetical</button>
+<button class="secondary" onclick="sortWatched('genre')">By Genre</button>
+<button class="secondary" onclick="sortWatched('type')">By Type</button>
 
 <div class="section">
 <h2>Watched</h2>
@@ -125,7 +127,7 @@ button:hover {
 
 <div class="section">
 <h2>Wishlist</h2>
-<div id="wishlist"></div>
+<div id="wishlistList"></div>
 </div>
 
 <script>
@@ -231,8 +233,11 @@ function sortWatched(type) {
 
 function render() {
 
-  watchedList.innerHTML = "";
-  wishlist.innerHTML = "";
+  const watchedDiv = document.getElementById("watchedList");
+  const wishlistDiv = document.getElementById("wishlistList");
+
+  watchedDiv.innerHTML = "";
+  wishlistDiv.innerHTML = "";
 
   let filtered = watched.filter(e => {
 
@@ -258,11 +263,11 @@ function render() {
   });
 
   filtered.forEach((e,i)=>{
-    watchedList.innerHTML += `
+    watchedDiv.innerHTML += `
       <div class="card">
         <div class="top-row">
           <strong>${e.title}</strong>
-          <button class="delete-btn small-btn" onclick="deleteWatched(${i})">Delete</button>
+          <button class="danger" onclick="deleteWatched(${i})">Delete</button>
         </div>
         Type: ${e.type}<br>
         Genre: ${e.genre}<br>
@@ -274,13 +279,13 @@ function render() {
   });
 
   wishlist.forEach((e,i)=>{
-    wishlist.innerHTML += `
+    wishlistDiv.innerHTML += `
       <div class="card">
         <div class="top-row">
           <strong>${e.title}</strong>
           <div>
-            <button class="action-btn small-btn" onclick="moveToWatched(${i})">Move</button>
-            <button class="delete-btn small-btn" onclick="deleteWishlist(${i})">Delete</button>
+            <button class="success" onclick="moveToWatched(${i})">Move</button>
+            <button class="danger" onclick="deleteWishlist(${i})">Delete</button>
           </div>
         </div>
         Type: ${e.type}<br>
