@@ -77,8 +77,33 @@ button:hover { opacity: 0.85; }
   <option>Movie</option>
   <option>Series</option>
   <option>Book</option>
+
+<select id="genre" placeholder="Genre">
+  <option value="">Select Genre</option>
+  <option>Action</option>
+  <option>Drama</option>
+  <option>Comedy</option>
+  <option>Romance</option>
+  <option>Thriller</option>
+  <option>Sci-Fi</option>
+  <option>Horror</option>
+  <option>Mystry</option>
+  <option>Superhero</option>
+  <option>Spy</option>
+  <option>FamilyDrama</option>
+  <option>Fantasy</option>
+  <option>Animation</option>
+  <option>Cartoon</option>
+  <option>Documentry</option>
+  <option>Biography</option>
+  <option>Travel</option>
+  <option>Musical</option>
+  <option>Crime</option>
+  <option>RealityShow</option>
+  <option>GameShow</option>
+  <option>TalkShow</option>
+
 </select>
-<input id="genre" placeholder="Genre">
 <input id="rating" type="number" placeholder="Rating (1-10)">
 <input id="date" type="date">
 <textarea id="notes" placeholder="Notes"></textarea>
@@ -97,10 +122,29 @@ button:hover { opacity: 0.85; }
 
 <select onchange="setGenreFilter(this.value)">
   <option value="all">All Genres</option>
-  <option>Horror</option>
-  <option>Mystery</option>
-  <option>Romance</option>
   <option>Action</option>
+  <option>Drama</option>
+  <option>Comedy</option>
+  <option>Romance</option>
+  <option>Thriller</option>
+  <option>Sci-Fi</option>
+  <option>Horror</option>
+  <option>Mystry</option>
+  <option>Superhero</option>
+  <option>Spy</option>
+  <option>FamilyDrama</option>
+  <option>Fantasy</option>
+  <option>Animation</option>
+  <option>Cartoon</option>
+  <option>Documentry</option>
+  <option>Biography</option>
+  <option>Travel</option>
+  <option>Musical</option>
+  <option>Crime</option>
+  <option>RealityShow</option>
+  <option>GameShow</option>
+  <option>TalkShow</option>
+
 </select>
 
 <select onchange="setTypeFilter(this.value)">
