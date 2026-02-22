@@ -73,12 +73,14 @@ button:hover { opacity: 0.85; }
 <h2>Add Media</h2>
 
 <input id="title" placeholder="Title">
+
 <select id="type">
   <option>Movie</option>
   <option>Series</option>
   <option>Book</option>
+</select>
 
-<select id="genre" placeholder="Genre">
+<select id="genre">
   <option value="">Select Genre</option>
   <option>Action</option>
   <option>Drama</option>
@@ -87,14 +89,14 @@ button:hover { opacity: 0.85; }
   <option>Thriller</option>
   <option>Sci-Fi</option>
   <option>Horror</option>
-  <option>Mystry</option>
+  <option>Mystery</option>
   <option>Superhero</option>
   <option>Spy</option>
   <option>FamilyDrama</option>
   <option>Fantasy</option>
   <option>Animation</option>
   <option>Cartoon</option>
-  <option>Documentry</option>
+  <option>Documentary</option>
   <option>Biography</option>
   <option>Travel</option>
   <option>Musical</option>
@@ -102,12 +104,13 @@ button:hover { opacity: 0.85; }
   <option>RealityShow</option>
   <option>GameShow</option>
   <option>TalkShow</option>
-
 </select>
+
 <input id="rating" type="number" placeholder="Rating (1-10)">
 <input id="date" type="date">
 <textarea id="notes" placeholder="Notes"></textarea>
 <br>
+
 <button class="primary" onclick="addWatched()">Add to Watched</button>
 <button class="success" onclick="addWishlist()">Add to Wishlist</button>
 
@@ -129,14 +132,14 @@ button:hover { opacity: 0.85; }
   <option>Thriller</option>
   <option>Sci-Fi</option>
   <option>Horror</option>
-  <option>Mystry</option>
+  <option>Mystery</option>
   <option>Superhero</option>
   <option>Spy</option>
   <option>FamilyDrama</option>
   <option>Fantasy</option>
   <option>Animation</option>
   <option>Cartoon</option>
-  <option>Documentry</option>
+  <option>Documentary</option>
   <option>Biography</option>
   <option>Travel</option>
   <option>Musical</option>
@@ -144,7 +147,6 @@ button:hover { opacity: 0.85; }
   <option>RealityShow</option>
   <option>GameShow</option>
   <option>TalkShow</option>
-
 </select>
 
 <select onchange="setTypeFilter(this.value)">
@@ -175,10 +177,8 @@ button:hover { opacity: 0.85; }
 </div>
 
 <script>
-
 let watched = JSON.parse(localStorage.getItem("watched")) || [];
 let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-
 let timeFilter = "";
 let genreFilter = "";
 let typeFilter = "";
@@ -276,7 +276,6 @@ function sortWatched(type) {
 }
 
 function render() {
-
   const watchedDiv = document.getElementById("watchedList");
   const wishlistDiv = document.getElementById("wishlistList");
 
@@ -284,7 +283,6 @@ function render() {
   wishlistDiv.innerHTML = "";
 
   let filtered = watched.filter(e => {
-
     let match = true;
 
     if (timeFilter === "thisYear")
@@ -345,7 +343,6 @@ function render() {
 }
 
 render();
-
 </script>
 
 </body>
