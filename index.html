@@ -1,350 +1,278 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>CineNova Tracker - Mobile App Style</title>
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CineNova Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
 <style>
-/* --- App-like Dark Theme --- */
+:root {
+  --primary: #6366f1;
+  --success: #10b981;
+  --danger: #f43f5e;
+  --bg: #0b0f1a;
+  --card-bg: #161e2d;
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --text: #ffffff;
+  --text-dim: #94a3b8;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
 body {
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  background: #121212;
-  color: #f0f0f0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg);
+  background-image: radial-gradient(circle at 50% -20%, #1e1b4b, #0b0f1a);
+  color: var(--text);
   margin: 0;
-  padding: 0;
+  padding: 20px 16px 100px;
 }
 
-.container {
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
+/* Header */
+.header { margin-bottom: 20px; padding-left: 5px; }
+.header h1 { font-size: 24px; font-weight: 800; margin: 0; background: linear-gradient(to right, #fff, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.header p { color: var(--text-dim); font-size: 13px; margin: 4px 0; }
+
+/* Filter Bar - Slim & Subtle */
+.filter-bar {
+  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 10px;
+  scrollbar-width: none;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+
+select.minimal-select {
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-dim);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  min-width: 100px;
+  flex-shrink: 0;
 }
 
-/* Headings */
-h2 {
-  margin-top: 25px;
-  font-size: 24px;
-  font-weight: 700;
-  color: #ffffff;
+/* Entry Form Overlay */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px); display: none; z-index: 2000;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal {
+  background: var(--card-bg); width: 100%; max-width: 400px;
+  padding: 25px; border-radius: 28px; border: 1px solid var(--glass-border);
 }
 
-/* Inputs & Selects & Textarea */
+.input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
 input, select, textarea {
-  width: 100%;
-  font-size: 16px;
-  padding: 14px;
-  margin: 10px 0;
-  border-radius: 12px;
-  border: none;
-  background: #1e1e1e;
-  color: #f0f0f0;
+  width: 100%; background: #0b0f1a; border: 1px solid var(--glass-border);
+  color: white; padding: 12px; border-radius: 12px; margin-bottom: 10px;
+  font-size: 14px; font-family: inherit;
 }
 
-input:focus, select:focus, textarea:focus {
-  outline: 2px solid #3b82f6;
-}
+/* Cards - Content First */
+.section-label { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1.5px; margin: 25px 0 10px 5px; }
 
-/* Buttons */
-button {
-  width: 100%;
-  padding: 16px;
-  margin: 10px 0;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.primary { background: #3b82f6; color: white; }
-.success { background: #10b981; color: white; }
-.danger  { background: #ef4444; color: white; }
-.secondary { background: #64748b; color: white; }
-
-button:hover {
-  opacity: 0.85;
-}
-
-/* Cards */
 .card {
-  background: #1e1e1e;
-  padding: 20px;
-  margin: 15px 0;
-  border-radius: 16px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.5);
-  font-size: 16px;
+  background: var(--card-bg); border-radius: 20px; padding: 14px 16px;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 12px;
+  border: 1px solid transparent; transition: 0.2s; position: relative;
+}
+.card:active { transform: scale(0.98); background: #1c2537; }
+
+.card-check {
+  width: 18px; height: 18px; accent-color: var(--primary);
+  opacity: 0.4; transition: 0.3s;
+}
+.card-check:checked { opacity: 1; }
+
+.card-info { flex: 1; }
+.card-info h3 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+.card-meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+.type-tag { font-size: 10px; color: var(--text-dim); text-transform: uppercase; border: 1px solid #334155; padding: 1px 6px; border-radius: 4px; }
+.rating-tag { font-size: 10px; font-weight: 800; color: #fbbf24; }
+
+/* 3-Dots Menu */
+.dots-btn { background: none; border: none; color: var(--text-dim); padding: 5px 10px; font-size: 18px; }
+.menu-pop {
+  position: absolute; right: 10px; top: 40px; background: #1e293b; 
+  border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  display: none; z-index: 100; overflow: hidden;
+}
+.menu-pop button {
+  display: block; width: 100%; padding: 12px 20px; border: none;
+  background: none; color: white; text-align: left; font-size: 13px;
 }
 
-/* Card Top Row */
-.top-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
+/* Discreet FAB */
+.fab {
+  position: fixed; bottom: 25px; right: 25px;
+  width: 52px; height: 52px; border-radius: 18px;
+  background: var(--primary); border: none; color: white;
+  font-size: 24px; box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+  z-index: 1000;
 }
 
-/* Filters Box */
-.filter-box {
-  background: #1e1e1e;
-  padding: 20px;
-  border-radius: 16px;
-  margin: 20px 0;
-  font-size: 16px;
-}
-
-/* Sort buttons */
-.sort-buttons button {
-  width: 48%;
-  display: inline-block;
-  margin-right: 4%;
-}
-.sort-buttons button:nth-child(2n) {
-  margin-right: 0;
-}
-
-/* Responsive text & spacing for phone */
-@media (max-width: 480px) {
-  h2 { font-size: 20px; }
-  input, select, textarea, button { font-size: 16px; padding: 14px; }
-  .card { font-size: 16px; padding: 18px; }
+/* Top Delete Bar */
+.delete-bar {
+  position: fixed; top: 0; left: 0; width: 100%; height: 55px;
+  background: var(--danger); display: none; align-items: center;
+  justify-content: space-between; padding: 0 20px; z-index: 3000; font-weight: 600;
 }
 </style>
 </head>
 <body>
 
-<div class="container">
-
-<h2>Add Media</h2>
-
-<input id="title" placeholder="Title">
-
-<select id="type">
-  <option>Movie</option>
-  <option>Series</option>
-  <option>Book</option>
-</select>
-
-<select id="genre">
-  <option value="">Select Genre</option>
-  <option>Action</option>
-  <option>Drama</option>
-  <option>Comedy</option>
-  <option>Romance</option>
-  <option>Thriller</option>
-  <option>Sci-Fi</option>
-  <option>Horror</option>
-  <option>Mystery</option>
-  <option>Superhero</option>
-  <option>Spy</option>
-  <option>FamilyDrama</option>
-  <option>Fantasy</option>
-  <option>Animation</option>
-  <option>Cartoon</option>
-  <option>Documentary</option>
-  <option>Biography</option>
-  <option>Travel</option>
-  <option>Musical</option>
-  <option>Crime</option>
-  <option>RealityShow</option>
-  <option>GameShow</option>
-  <option>TalkShow</option>
-</select>
-
-<input id="rating" type="number" placeholder="Rating (1-10)">
-<input id="date" type="date">
-<textarea id="notes" placeholder="Notes"></textarea>
-
-<button class="primary" onclick="addWatched()">Add to Watched</button>
-<button class="success" onclick="addWishlist()">Add to Wishlist</button>
-
-<div class="filter-box">
-<h2>Filters</h2>
-
-<select onchange="setTimeFilter(this.value)">
-  <option value="">All Time</option>
-  <option value="thisYear">This Year</option>
-  <option value="lastMonth">Last Month</option>
-</select>
-
-<select onchange="setGenreFilter(this.value)">
-  <option value="all">All Genres</option>
-  <option>Action</option>
-  <option>Drama</option>
-  <option>Comedy</option>
-  <option>Romance</option>
-  <option>Thriller</option>
-  <option>Sci-Fi</option>
-  <option>Horror</option>
-  <option>Mystery</option>
-  <option>Superhero</option>
-  <option>Spy</option>
-  <option>FamilyDrama</option>
-  <option>Fantasy</option>
-  <option>Animation</option>
-  <option>Cartoon</option>
-  <option>Documentary</option>
-  <option>Biography</option>
-  <option>Travel</option>
-  <option>Musical</option>
-  <option>Crime</option>
-  <option>RealityShow</option>
-  <option>GameShow</option>
-  <option>TalkShow</option>
-</select>
-
-<select onchange="setTypeFilter(this.value)">
-  <option value="all">All Types</option>
-  <option>Movie</option>
-  <option>Series</option>
-  <option>Book</option>
-</select>
-
-<p id="watchedCount"></p>
+<div class="delete-bar" id="deleteBar">
+  <span id="selCount">0 items</span>
+  <button onclick="deleteBulk()" style="background:white; color:var(--danger); border:none; padding:6px 12px; border-radius:8px; font-weight:bold;">Delete</button>
 </div>
 
-<h2>Sort</h2>
-<div class="sort-buttons">
-  <button class="secondary" onclick="sortWatched('date')">By Date</button>
-  <button class="secondary" onclick="sortWatched('rating')">By Rating</button>
-  <button class="secondary" onclick="sortWatched('alpha')">Alphabetical</button>
-  <button class="secondary" onclick="sortWatched('genre')">By Genre</button>
-  <button class="secondary" onclick="sortWatched('type')">By Type</button>
+<div class="header">
+  <h1>CineNova</h1>
+  <p id="stats">Keeping track of your journey</p>
 </div>
 
-<div class="section">
-<h2>Watched</h2>
+<div class="filter-bar">
+  <select id="fType" class="minimal-select" onchange="render()"><option value="all">All Types</option><option>Movie</option><option>Series</option><option>Book</option></select>
+  <select id="fGenre" class="minimal-select" onchange="render()"><option value="all">All Genres</option>
+    <option>Action</option><option>Drama</option><option>Comedy</option><option>Romance</option><option>Thriller</option><option>Sci-Fi</option><option>Horror</option><option>Mystery</option><option>Superhero</option><option>Spy</option><option>FamilyDrama</option><option>Fantasy</option><option>Animation</option><option>Cartoon</option><option>Documentary</option><option>Biography</option><option>Travel</option><option>Musical</option><option>Crime</option><option>RealityShow</option><option>GameShow</option><option>TalkShow</option>
+  </select>
+  <select id="fSort" class="minimal-select" onchange="render()"><option value="newest">Recent</option><option value="alpha">A-Z</option><option value="rating">Top Rated</option></select>
+</div>
+
 <div id="watchedList"></div>
+<div id="wishlistList"></div>
+
+<div class="overlay" id="addOverlay" onclick="closeForm(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2 style="margin: 0 0 20px; font-size: 18px;">Add New</h2>
+    <input id="title" placeholder="Title">
+    <div class="input-grid">
+      <select id="type"><option>Movie</option><option>Series</option><option>Book</option></select>
+      <select id="genre"><option value="">Genre</option>
+        <option>Action</option><option>Drama</option><option>Comedy</option><option>Romance</option><option>Thriller</option><option>Sci-Fi</option><option>Horror</option><option>Mystery</option><option>Superhero</option><option>Spy</option><option>FamilyDrama</option><option>Fantasy</option><option>Animation</option><option>Cartoon</option><option>Documentary</option><option>Biography</option><option>Travel</option><option>Musical</option><option>Crime</option><option>RealityShow</option><option>GameShow</option><option>TalkShow</option>
+      </select>
+    </div>
+    <div class="input-grid">
+      <input id="rating" type="number" placeholder="Rating/10">
+      <input id="date" type="date">
+    </div>
+    <textarea id="notes" placeholder="Quick thoughts..."></textarea>
+    <div style="display:flex; gap:10px;">
+      <button onclick="addItem('watched')" style="flex:1; background:var(--primary); color:white; border:none; padding:12px; border-radius:12px; font-weight:600;">+ Watched</button>
+      <button onclick="addItem('wishlist')" style="flex:1; background:var(--success); color:white; border:none; padding:12px; border-radius:12px; font-weight:600;">+ Wishlist</button>
+    </div>
+  </div>
 </div>
 
-<div class="section">
-<h2>Wishlist</h2>
-<div id="wishlistList"></div>
-</div>
+<button class="fab" onclick="document.getElementById('addOverlay').style.display='flex'">+</button>
 
 <script>
-// --- JS remains same as your original code ---
-let watched = JSON.parse(localStorage.getItem("watched")) || [];
-let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-let timeFilter = "";
-let genreFilter = "";
-let typeFilter = "";
+let items = JSON.parse(localStorage.getItem("cine_v4")) || { watched: [], wishlist: [] };
 
-function save() {
-  localStorage.setItem("watched", JSON.stringify(watched));
-  localStorage.setItem("wishlist", JSON.stringify(wishlist));
-}
+function save() { localStorage.setItem("cine_v4", JSON.stringify(items)); }
 
-function getFormData() {
-  return {
-    title: title.value,
-    type: type.value,
-    genre: genre.value,
-    rating: rating.value,
-    date: date.value,
-    notes: notes.value
+function addItem(list) {
+  const title = document.getElementById('title').value;
+  if(!title) return;
+  const item = {
+    id: Date.now(), title,
+    type: document.getElementById('type').value,
+    genre: document.getElementById('genre').value || 'Other',
+    rating: document.getElementById('rating').value || 0,
+    date: document.getElementById('date').value || new Date().toISOString().split('T')[0],
+    notes: document.getElementById('notes').value
   };
+  items[list].unshift(item);
+  save(); render();
+  document.getElementById('addOverlay').style.display = 'none';
+  document.getElementById('title').value = "";
 }
 
-function clearForm() {
-  title.value = "";
-  genre.value = "";
-  rating.value = "";
-  date.value = "";
-  notes.value = "";
+function closeForm(e) { document.getElementById('addOverlay').style.display = 'none'; }
+
+function togglePop(id) {
+  const pop = document.getElementById('p'+id);
+  const isVisible = pop.style.display === 'block';
+  document.querySelectorAll('.menu-pop').forEach(m => m.style.display = 'none');
+  pop.style.display = isVisible ? 'none' : 'block';
 }
 
-function addWatched() {
-  watched.push(getFormData());
-  save();
-  render();
-  clearForm();
+function deleteOne(list, id) { items[list] = items[list].filter(i => i.id !== id); save(); render(); }
+function moveOne(id) {
+  const idx = items.wishlist.findIndex(i => i.id === id);
+  const item = items.wishlist.splice(idx, 1)[0];
+  items.watched.unshift(item);
+  save(); render();
 }
 
-function addWishlist() {
-  wishlist.push(getFormData());
-  save();
-  render();
-  clearForm();
+function updateSelectCount() {
+  const checked = document.querySelectorAll('.card-check:checked').length;
+  document.getElementById('deleteBar').style.display = checked > 0 ? 'flex' : 'none';
+  document.getElementById('selCount').innerText = `${checked} Selected`;
 }
 
-function deleteWatched(index) {
-  if (confirm("Delete this item from Watched?")) {
-    watched.splice(index, 1);
-    save();
-    render();
+function deleteBulk() {
+  const checked = document.querySelectorAll('.card-check:checked');
+  if(confirm("Delete selected?")) {
+    checked.forEach(cb => {
+      const id = parseInt(cb.value);
+      items.watched = items.watched.filter(i => i.id !== id);
+      items.wishlist = items.wishlist.filter(i => i.id !== id);
+    });
+    save(); render(); updateSelectCount();
   }
-}
-
-function deleteWishlist(index) {
-  if (confirm("Delete this item from Wishlist?")) {
-    wishlist.splice(index, 1);
-    save();
-    render();
-  }
-}
-
-function moveToWatched(index) {
-  if (confirm("Move this to Watched?")) {
-    watched.push(wishlist[index]);
-    wishlist.splice(index, 1);
-    save();
-    render();
-  }
-}
-
-function setTimeFilter(value) { timeFilter = value; render(); }
-function setGenreFilter(value) { genreFilter = value.toLowerCase(); render(); }
-function setTypeFilter(value) { typeFilter = value.toLowerCase(); render(); }
-
-function sortWatched(type) {
-  if (type==="date") watched.sort((a,b)=>new Date(b.date)-new Date(a.date));
-  if (type==="rating") watched.sort((a,b)=>b.rating-a.rating);
-  if (type==="alpha") watched.sort((a,b)=>a.title.localeCompare(b.title));
-  if (type==="genre") watched.sort((a,b)=>a.genre.localeCompare(b.genre));
-  if (type==="type") watched.sort((a,b)=>a.type.localeCompare(b.type));
-  render();
 }
 
 function render() {
-  const watchedDiv = document.getElementById("watchedList");
-  const wishlistDiv = document.getElementById("wishlistList");
+  const fType = document.getElementById('fType').value;
+  const fGenre = document.getElementById('fGenre').value;
+  const fSort = document.getElementById('fSort').value;
 
-  watchedDiv.innerHTML = "";
-  wishlistDiv.innerHTML = "";
+  ['watched', 'wishlist'].forEach(list => {
+    const div = document.getElementById(list + 'List');
+    div.innerHTML = `<div class="section-label">${list}</div>`;
+    
+    let filtered = items[list].filter(i => (fType === 'all' || i.type === fType) && (fGenre === 'all' || i.genre === fGenre));
+    
+    filtered.sort((a,b) => {
+      if(fSort === 'alpha') return a.title.localeCompare(b.title);
+      if(fSort === 'rating') return b.rating - a.rating;
+      return new Date(b.date) - new Date(a.date);
+    });
 
-  let filtered = watched.filter(e => {
-    let match = true;
-    if(timeFilter==="thisYear") match=match&&e.date&&new Date(e.date).getFullYear()===new Date().getFullYear();
-    if(timeFilter==="lastMonth"){ let today=new Date(); let lastMonth=new Date(today.getFullYear(),today.getMonth()-1); let d=new Date(e.date); match=match&&d.getMonth()===lastMonth.getMonth()&&d.getFullYear()===lastMonth.getFullYear();}
-    if(genreFilter&&genreFilter!=="all") match=match&&e.genre.toLowerCase()===genreFilter;
-    if(typeFilter&&typeFilter!=="all") match=match&&e.type.toLowerCase()===typeFilter;
-    return match;
+    filtered.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <input type="checkbox" class="card-check" value="${item.id}" onchange="updateSelectCount()">
+        <div class="card-info" onclick="togglePop(${item.id})">
+          <h3>${item.title}</h3>
+          <div class="card-meta">
+            <span class="type-tag">${item.type}</span>
+            <span style="font-size:10px; color:var(--text-dim)">${item.genre}</span>
+            ${item.rating > 0 ? `<span class="rating-tag">★ ${item.rating}</span>` : ''}
+          </div>
+        </div>
+        <button class="dots-btn" onclick="togglePop(${item.id})">⋮</button>
+        <div class="menu-pop" id="p${item.id}">
+          ${list === 'wishlist' ? `<button onclick="moveOne(${item.id})" style="color:var(--success)">Move to Watched</button>` : ''}
+          <button onclick="deleteOne('${list}', ${item.id})" style="color:var(--danger)">Delete</button>
+        </div>
+      `;
+      div.appendChild(card);
+    });
   });
-
-  filtered.forEach((e,i)=>{
-    watchedDiv.innerHTML+=`<div class="card">
-      <div class="top-row"><strong>${e.title}</strong><button class="danger" onclick="deleteWatched(${i})">Delete</button></div>
-      Type: ${e.type}<br>Genre: ${e.genre}<br>Rating: ${e.rating}/10<br>Date: ${e.date}<br>Notes: ${e.notes}
-    </div>`;
-  });
-
-  wishlist.forEach((e,i)=>{
-    wishlistDiv.innerHTML+=`<div class="card">
-      <div class="top-row"><strong>${e.title}</strong>
-      <div><button class="success" onclick="moveToWatched(${i})">Move</button>
-      <button class="danger" onclick="deleteWishlist(${i})">Delete</button></div></div>
-      Type: ${e.type}<br>Genre: ${e.genre}<br>Rating: ${e.rating}/10<br>Date: ${e.date}<br>Notes: ${e.notes}
-    </div>`;
-  });
-
-  watchedCount.innerText = "Filtered Results: "+filtered.length;
+  document.getElementById('stats').innerText = `${items.watched.length} watched • ${items.wishlist.length} wishlist`;
 }
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.dots-btn') && !e.target.closest('.card-info')) {
+    document.querySelectorAll('.menu-pop').forEach(m => m.style.display = 'none');
+  }
+});
 
 render();
 </script>
-
-</div>
 </body>
 </html>
