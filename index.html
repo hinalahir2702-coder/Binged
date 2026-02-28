@@ -64,26 +64,43 @@ body {
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 input, select, textarea {
   width: 100%; background: var(--input-bg); border: 1px solid var(--glass-border);
-  color: white; padding: 12px; border-radius: 14px; font-size: 14px; height: 48px;
+  color: white; padding: 12px; border-radius: 14px; font-size: 14px; height: 52px;
+}
+
+/* NUCLEAR DATE FIX */
+input[type="date"] {
+  display: flex; align-items: center; justify-content: center;
+  -webkit-appearance: none; appearance: none;
+  padding: 0 12px; text-align: center;
 }
 
 .section-label { font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; margin: 30px 0 10px 6px; }
 
 .card {
-  background: var(--card-bg); border-radius: 20px; padding: 16px 18px;
+  background: var(--card-bg); border-radius: 20px; padding: 18px;
   margin-bottom: 12px; border: 1px solid var(--glass-border);
   position: relative; cursor: pointer;
 }
 
-.card-info h3 { margin: 0; font-size: 17px; font-weight: 600; color: #eee; padding-right: 90px; }
+.card-info h3 { margin: 0; font-size: 17px; font-weight: 600; color: #eee; padding-right: 60px; }
 .tag { font-size: 9px; color: var(--text-dim); background: rgba(255,255,255,0.05); padding: 3px 7px; border-radius: 5px; text-transform: uppercase; margin-right: 4px; font-weight: 600; }
 
 .details { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--glass-border); }
 .card.open .details { display: block; }
 .notes-box { font-size: 14px; color: #d4d4d8; line-height: 1.6; white-space: pre-wrap; margin-top: 8px; }
 
-.card-controls { position: absolute; top: 16px; right: 12px; display: flex; align-items: center; gap: 10px; z-index: 5; }
-.control-btn { background: none; border: none; font-size: 18px; cursor: pointer; padding: 0; opacity: 0.6; }
+/* 3 DOT MENU UI */
+.card-controls { position: absolute; top: 18px; right: 12px; z-index: 10; display: flex; align-items: center; gap: 10px; }
+.dots-btn { background: none; border: none; color: var(--text-dim); font-size: 22px; cursor: pointer; padding: 0 5px; }
+.menu-dropdown {
+  position: absolute; top: 30px; right: 0; background: #222226; border: 1px solid var(--glass-border);
+  border-radius: 12px; display: none; flex-direction: column; width: 100px; z-index: 100; overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+.menu-dropdown.show { display: flex; }
+.menu-item { background: none; border: none; color: white; padding: 10px; font-size: 12px; text-align: left; width: 100%; cursor: pointer; border-bottom: 1px solid var(--glass-border); }
+.menu-item:last-child { border: none; }
+.card-check { width: 16px; height: 16px; accent-color: var(--primary); }
 
 .fab {
   position: fixed; bottom: 30px; right: 25px;
@@ -91,18 +108,21 @@ input, select, textarea {
   background: var(--primary); border: none; color: white; font-size: 30px; z-index: 1000;
 }
 
+/* REFINED DELETE BAR */
 .delete-bar {
-  position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+  position: fixed; top: 0; left: 0; width: 100%; height: 50px;
   background: #161618; border-bottom: 1px solid var(--danger);
   display: none; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 3000;
 }
+.del-btn-small { background: var(--danger); color: white; border: none; padding: 6px 14px; border-radius: 8px; font-weight: 800; font-size: 10px; text-transform: uppercase; }
+
 </style>
 </head>
 <body>
 
 <div class="delete-bar" id="deleteBar">
-  <span id="selCount" style="font-size:13px; font-weight:600;">0 Selected</span>
-  <button onclick="deleteBulk()" style="background:var(--danger); color:white; border:none; padding:8px 16px; border-radius:10px; font-weight:800; font-size:11px;">Delete Selected</button>
+  <span id="selCount" style="font-size:12px; font-weight:600;">0 Selected</span>
+  <button onclick="deleteBulk()" class="del-btn-small">Delete Items</button>
 </div>
 
 <div class="header-flex">
@@ -150,13 +170,7 @@ input, select, textarea {
 <button class="fab" onclick="openForAdd()">+</button>
 
 <script>
-// ALL PREVIOUS GENRES + NEW BOOK GENRES
-const ALL_GENRES = [
-  "Action", "Drama", "Comedy", "Romance", "Thriller", "Sci-Fi", "Horror", "Mystery", 
-  "Superhero", "Spy", "FamilyDrama", "Fantasy", "Animation", "Cartoon", "Documentary", 
-  "Biography", "Travel", "Musical", "Crime", "RealityShow", "GameShow", "TalkShow",
-  "Fiction", "Non-Fiction", "Historical", "Self-Help", "Poetry", "Classics", "Other"
-];
+const ALL_GENRES = ["Action", "Drama", "Comedy", "Romance", "Thriller", "Sci-Fi", "Horror", "Mystery", "Superhero", "Spy", "FamilyDrama", "Fantasy", "Animation", "Cartoon", "Documentary", "Biography", "Travel", "Musical", "Crime", "RealityShow", "GameShow", "TalkShow", "Fiction", "Non-Fiction", "Historical", "Self-Help", "Poetry", "Classics", "Other"];
 
 function populateGenres() {
   const selects = [document.getElementById('fGenre'), document.getElementById('genre')];
@@ -170,11 +184,11 @@ function populateGenres() {
   });
 }
 
-let items = JSON.parse(localStorage.getItem("proc_prod_vFinal_Complete")) || { completed: [], queue: [], progress: [] };
+let items = JSON.parse(localStorage.getItem("proc_prod_v9")) || { completed: [], queue: [], progress: [] };
 let editingId = null;
 let editingFromList = null;
 
-function save() { localStorage.setItem("proc_prod_vFinal_Complete", JSON.stringify(items)); }
+function save() { localStorage.setItem("proc_prod_v9", JSON.stringify(items)); }
 
 function openForAdd() {
   editingId = null;
@@ -184,10 +198,18 @@ function openForAdd() {
   document.getElementById('addOverlay').style.display = 'flex';
 }
 
+function toggleMenu(id, e) {
+  e.stopPropagation();
+  const menu = document.getElementById(`menu-${id}`);
+  document.querySelectorAll('.menu-dropdown').forEach(m => { if(m !== menu) m.classList.remove('show'); });
+  menu.classList.toggle('show');
+}
+
+window.onclick = () => document.querySelectorAll('.menu-dropdown').forEach(m => m.classList.remove('show'));
+
 function openForEdit(list, id, e) {
   e.stopPropagation();
   const item = items[list].find(i => i.id === id);
-  if(!item) return;
   editingId = id; editingFromList = list;
   document.getElementById('modalTitle').innerText = "Edit Entry";
   document.getElementById('title').value = item.title;
@@ -202,14 +224,7 @@ function openForEdit(list, id, e) {
 function handleSave(toList) {
   const title = document.getElementById('title').value;
   if(!title) return;
-  const newItem = {
-    id: editingId || Date.now(), title,
-    type: document.getElementById('type').value,
-    genre: document.getElementById('genre').value,
-    rating: document.getElementById('rating').value || '?',
-    date: document.getElementById('date').value,
-    notes: document.getElementById('notes').value || ""
-  };
+  const newItem = { id: editingId || Date.now(), title, type: document.getElementById('type').value, genre: document.getElementById('genre').value, rating: document.getElementById('rating').value || '?', date: document.getElementById('date').value, notes: document.getElementById('notes').value || "" };
   if(editingId) { items[editingFromList] = items[editingFromList].filter(i => i.id !== editingId); }
   items[toList].unshift(newItem);
   save(); render();
@@ -217,6 +232,7 @@ function handleSave(toList) {
 }
 
 function closeForm(e) { document.getElementById('addOverlay').style.display = 'none'; }
+
 function deleteOne(list, id, e) {
   e.stopPropagation();
   if(confirm("Delete this entry?")) { items[list] = items[list].filter(i => i.id !== id); save(); render(); }
@@ -230,11 +246,8 @@ function updateSelectCount() {
 
 function deleteBulk() {
   const checked = document.querySelectorAll('.card-check:checked');
-  if(confirm(`Delete ${checked.length} selected items?`)) {
-    checked.forEach(cb => {
-      const id = parseInt(cb.value);
-      Object.keys(items).forEach(list => { items[list] = items[list].filter(i => i.id !== id); });
-    });
+  if(confirm(`Delete ${checked.length} items?`)) {
+    checked.forEach(cb => { const id = parseInt(cb.value); Object.keys(items).forEach(list => { items[list] = items[list].filter(i => i.id !== id); }); });
     save(); render(); updateSelectCount();
   }
 }
@@ -258,9 +271,12 @@ function render() {
       card.onclick = function() { this.classList.toggle('open'); };
       card.innerHTML = `
         <div class="card-controls">
-          <button class="control-btn" onclick="openForEdit('${sec.key}', ${item.id}, event)" style="color:var(--text-dim)">✎</button>
           <input type="checkbox" class="card-check" value="${item.id}" onclick="event.stopPropagation()" onchange="updateSelectCount()">
-          <button class="control-btn" onclick="deleteOne('${sec.key}', ${item.id}, event)" style="color:var(--danger)">×</button>
+          <button class="dots-btn" onclick="toggleMenu(${item.id}, event)">⋮</button>
+          <div class="menu-dropdown" id="menu-${item.id}">
+            <button class="menu-item" onclick="openForEdit('${sec.key}', ${item.id}, event)">Edit Entry</button>
+            <button class="menu-item" style="color:var(--danger)" onclick="deleteOne('${sec.key}', ${item.id}, event)">Delete</button>
+          </div>
         </div>
         <div class="card-info">
           <h3>${item.title}</h3>
@@ -278,8 +294,7 @@ function render() {
       div.appendChild(card);
     });
   });
-  const total = items.completed.length + items.queue.length + items.progress.length;
-  document.getElementById('stats').innerText = `${total} Total Items Across All Lists`;
+  document.getElementById('stats').innerText = `${items.completed.length + items.queue.length + items.progress.length} Total Items`;
 }
 
 populateGenres();
